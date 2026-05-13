@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laporan Astekpam Siang</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 10px;
+        background: #f4f6f8;
+      }
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+      }
+      h2 {
+        text-align: center;
+        font-size: 1.4em;
+      }
+      h3 {
+        font-size: 1.2em;
+        margin-top: 20px;
+      }
+      h4 {
+        font-size: 1.1em;
+        margin-top: 15px;
+      }
+      .mb-3 {
+        margin-bottom: 12px;
+      }
+      label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.9em;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+      }
+      button {
+        padding: 12px 20px;
+        margin-top: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1em;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      /* Tombol Copy */
+      .copy-button-container {
+        text-align: right;
+        margin-top: 10px;
+      }
+      #copyButton {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
+      #copyButton:hover {
+        background-color: #218838;
+      }
+      #output {
+        width: 100%;
+        min-height: 600px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.95em;
+        line-height: 1.5;
+        resize: vertical;
+        box-sizing: border-box;
+        background-color: #f8f9fa;
+        margin-top: 10px;
+        white-space: pre-wrap;
+      }
+      .section {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #ddd;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .col {
+        flex: 1;
+      }
+      .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #d4d4d4;
+        font-size: 0.9em;
+      }
+      .autocomplete-items div:hover {
+        background-color: #e9e9e9;
+      }
+      .autocomplete-active {
+        background-color: #28a745 !important;
+        color: #ffffff;
+      }
+      .input-container {
+        position: relative;
+      }
+      @media (max-width: 768px) {
+        body {
+          padding: 5px;
+        }
+        .container {
+          padding: 10px;
+        }
+        .row {
+          flex-direction: column;
+        }
+        h2 {
+          font-size: 1.3em;
+        }
+        h3 {
+          font-size: 1.1em;
+        }
+        label {
+          font-size: 0.85em;
+        }
+        input,
+        select,
+        textarea,
+        button {
+          font-size: 0.95em;
+        }
+        pre {
+          font-size: 0.8em;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>FORM LAPORAN ASTEKPAM SIANG</h2>
+
+      <div class="mb-3">
+        <label for="tanggal">Tanggal</label>
+        <input type="date" id="tanggal" />
+      </div>
+
+      <div class="row">
+        <div class="col mb-3">
+          <label for="darirupam">Dari Rupam</label>
+          <select id="darirupam">
+            <option value="Rupam I">Rupam I</option>
+            <option value="Rupam II">Rupam II</option>
+            <option value="Rupam III" selected>Rupam III</option>
+            <option value="Rupam IV">Rupam IV</option>
+          </select>
+        </div>
+        <div class="col mb-3">
+          <label for="kerupam">Ke Rupam</label>
+          <select id="kerupam" onchange="updatePersonilFromRupam()">
+            <option value="Rupam I">Rupam I</option>
+            <option value="Rupam II" selected>Rupam II</option>
+            <option value="Rupam III">Rupam III</option>
+            <option value="Rupam IV">Rupam IV</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>A. Jumlah Penghuni</h3>
+
+      <div class="mb-3">
+        <label for="tahananDalam">Tahanan di Dalam Lapas</label>
+        <input
+          type="number"
+          id="tahananDalam"
+          value="0"
+          oninput="updateTotalPenghuni()"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="napiDalam">Narapidana di Dalam Lapas</label>
+        <input
+          type="number"
+          id="napiDalam"
+          value="0"
+          oninput="updateTotalPenghuni()"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="jumlahDalamLapas">Jumlah Di Dalam Lapas (Otomatis)</label>
+        <input type="number" id="jumlahDalamLapas" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label for="tahananLuar">Tahanan di Luar Lapas</label>
+        <input
+          type="number"
+          id="tahananLuar"
+          value="0"
+          oninput="updateTotalPenghuni()"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="napiLuar">Narapidana di Luar Lapas</label>
+        <input
+          type="number"
+          id="napiLuar"
+          value="0"
+          oninput="updateTotalPenghuni()"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="jumlahDiLuarLapas">Jumlah Di Luar Lapas (Otomatis)</label>
+        <input type="number" id="jumlahDiLuarLapas" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label for="totalPenghuni">Total Penghuni (Otomatis)</label>
+        <input type="number" id="totalPenghuni" readonly />
+      </div>
+
+      <h3>B. Personil Pengamanan</h3>
+
+      <div class="mb-3">
+        <label for="rupam">Rupam</label>
+        <input type="number" id="rupam" value="5" oninput="updatePersonil()" />
+      </div>
+
+      <div class="mb-3">
+        <label for="p2u">P2U</label>
+        <input type="number" id="p2u" value="2" oninput="updatePersonil()" />
+      </div>
+
+      <div class="mb-3">
+        <label for="jumlahPersonil">Jumlah (Otomatis)</label>
+        <input type="number" id="jumlahPersonil" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label for="hadir">Hadir</label>
+        <input
+          type="number"
+          id="hadir"
+          value="7"
+          oninput="updateKeterangan()"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="keterangan">Keterangan (Otomatis)</label>
+        <input type="text" id="keterangan" value="Hadir Lengkap" />
+      </div>
+
+      <div class="section">
+        <h4>Detail Personil</h4>
+
+        <div class="mb-3">
+          <label for="karupam">Karupam</label>
+          <input type="text" id="karupam" value="Sdr. Maryoto" />
+        </div>
+
+        <div class="mb-3">
+          <label for="wakarupam">Wakarupam</label>
+          <input type="text" id="wakarupam" value="Sdr. Johan Bintara" />
+        </div>
+
+        <div class="mb-3">
+          <label for="p2u_list">Daftar P2U (pisahkan dengan koma)</label>
+          <textarea id="p2u_list" rows="2">
+Sdr. M. Ade Purwadi, Sdr. Ahmad Latif</textarea
+          >
+        </div>
+
+        <div class="mb-3">
+          <label for="petugas_blok_bc"
+            >Petugas Blok B dan C (pisahkan dengan koma)</label
+          >
+          <textarea id="petugas_blok_bc" rows="2">
+Sdr. Ario, Sdr. Rafi, Sdr. Adib</textarea
+          >
+        </div>
+
+        <div class="mb-3">
+          <label for="petugas_blok_def"
+            >Petugas Blok D, E dan F (pisahkan dengan koma)</label
+          >
+          <textarea id="petugas_blok_def" rows="2">Sdr. Johan Bintara</textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="petugas_menara2"
+            >Petugas Pos Menara 2 (pisahkan dengan koma)</label
+          >
+          <textarea id="petugas_menara2" rows="2">
+Sdr. Adib, Sdr. Ario, Sdr. Rafi</textarea
+          >
+        </div>
+
+        <div class="mb-3">
+          <label for="petugas_menara4"
+            >Petugas Pos Menara 4 (pisahkan dengan koma)</label
+          >
+          <textarea id="petugas_menara4" rows="2">
+Sdr. Rafi, Sdr. Adib, Sdr. Ario</textarea
+          >
+        </div>
+
+        <div class="mb-3 input-container">
+          <input
+            type="text"
+            id="pengawas_umum"
+            value="Bp. Cendy"
+            autocomplete="off"
+            hidden
+          />
+          <div
+            id="pengawas_umum-autocomplete-list"
+            class="autocomplete-items"
+          ></div>
+        </div>
+
+        <div class="mb-3 input-container">
+          <input
+            type="text"
+            id="piket_perwira"
+            value="Bp. Satria Agung W"
+            autocomplete="off"
+            hidden
+          />
+          <div
+            id="piket_perwira-autocomplete-list"
+            class="autocomplete-items"
+          ></div>
+        </div>
+
+        <div class="mb-3 input-container">
+          <label for="piket_staf_malam">Staf KPLP</label>
+          <input
+            type="text"
+            id="piket_staf_malam"
+            value="M. Alfin Muhsinin"
+            autocomplete="off"
+          />
+          <div
+            id="piket_staf_malam-autocomplete-list"
+            class="autocomplete-items"
+          ></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>C. Inventaris Pengamanan</h3>
+
+        <div class="mb-3">
+          <label for="ht">Pesawat HT</label>
+          <input type="number" id="ht" value="6" />
+        </div>
+
+        <div class="mb-3">
+          <label for="tongkat_phh">Tongkat PHH</label>
+          <input type="number" id="tongkat_phh" value="3" />
+        </div>
+
+        <div class="mb-3">
+          <label for="metal_detector">Metal Detector</label>
+          <input type="number" id="metal_detector" value="2" />
+        </div>
+
+        <div class="mb-3">
+          <label for="apar">Apar</label>
+          <input type="number" id="apar" value="6" />
+        </div>
+
+        <div class="mb-3">
+          <label for="meja_kursi">Meja, Kursi</label>
+          <input type="number" id="meja_kursi" value="2" />
+        </div>
+
+        <div class="mb-3">
+          <label for="payung">Payung</label>
+          <input type="number" id="payung" value="4" />
+        </div>
+
+        <div class="mb-3">
+          <label for="jas_hujan">Jas Hujan</label>
+          <input type="number" id="jas_hujan" value="4" />
+        </div>
+
+        <div class="mb-3">
+          <label for="senter">Senter</label>
+          <input type="number" id="senter" value="4" />
+        </div>
+
+        <div class="mb-3">
+          <label for="speaker_toa">Speaker/TOA</label>
+          <input type="number" id="speaker_toa" value="1" />
+        </div>
+
+        <div class="mb-3">
+          <label for="lonceng">Lonceng</label>
+          <input type="number" id="lonceng" value="4" />
+        </div>
+
+        <div class="mb-3">
+          <label for="sepatu_boot">Sepatu Boot</label>
+          <input type="number" id="sepatu_boot" value="3" />
+        </div>
+
+        <div class="mb-3">
+          <label for="pepper_spray">Pepper Spray</label>
+          <input type="number" id="pepper_spray" value="2" />
+        </div>
+      </div>
+
+      <button onclick="generateLaporan()">Generate Laporan</button>
+      <textarea id="output"> </textarea>
+
+      <div class="copy-button-container">
+        <button id="copyButton" onclick="copyToClipboard()">
+          Copy Laporan
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function formatTanggalIndonesia(date) {
+        const hari = [
+          "Minggu",
+          "Senin",
+          "Selasa",
+          "Rabu",
+          "Kamis",
+          "Jumat",
+          "Sabtu",
+        ];
+        const bulan = [
+          "Januari",
+          "Februari",
+          "Maret",
+          "April",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
+        ];
+
+        const d = new Date(date);
+        return `${hari[d.getDay()]}, ${String(d.getDate()).padStart(2, "0")} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+      }
+
+      // Set tanggal default ke hari ini
+      document.getElementById("tanggal").valueAsDate = new Date();
+
+      // Data personil berdasarkan rupam
+      const personilData = {
+        "Rupam I": {
+          karupam: "Sdr. Dodi Saptiyanto",
+          wakarupam: "Sdr. Imam Fauzi",
+          p2u_list: "Sdr. Achsanu Amala, Sdr. M. Aeni Sofyan",
+        },
+        "Rupam II": {
+          karupam: "Sdr. Maryoto",
+          wakarupam: "Sdr. Johan Bintara",
+          p2u_list: "Sdr. M. Ade Purwadi, Sdr. Ahmad Latif",
+        },
+        "Rupam III": {
+          karupam: "Sdr. Wahana",
+          wakarupam: "Sdr. Agung Feby. S",
+          p2u_list: "Sdr. Iqbal Zufroni, Sdr. Teguh Slamet",
+        },
+        "Rupam IV": {
+          karupam: "Sdr. Haryono",
+          wakarupam: "Sdr. Praditya Febriadi. P",
+          p2u_list: "Sdr. Umar Hakim, Sdr. Caputra",
+        },
+      };
+
+      // Data untuk autocomplete
+      const pengawasUmumData = [
+        "Amin Junaedi (Kasi Adm Kamtib)",
+        "D Ardhyna Bintara (Kasubag TU)",
+        "Sigit Riyanto (Ka KPLP)",
+        "Mu'ammar Fihri (Kasi Binadik)",
+      ];
+
+      const perwiraData = [
+        "Windu Ari Agung (Kasubsi Perawatan)",
+        "Indarto Adiputra (Kasubsi Peltatib)",
+        "Amin Aunur Rofiq. (Kasubsi Keamanan)",
+        "Mono Puswanto (Kaur Kepeg & Keu)",
+        "Rizal Eka PM. (Kaur Umum)",
+        "Satria Agung Wibowo (Kasubsi Registrasi)",
+        "Desdy Purwanto (Kasubsi Giatja)",
+      ];
+
+      const stafData = [
+        "David Tri Wicaksono",
+        "M. Aditya Nugratama",
+        "M. Alfin Muhsinin",
+        "M. Irfan Nuddin",
+      ];
+
+      function autocomplete(inp, arr) {
+        let currentFocus;
+
+        inp.addEventListener("input", function (e) {
+          closeAllLists();
+          let val = this.value;
+          if (!val) {
+            return false;
+          }
+
+          currentFocus = -1;
+          let div = document.createElement("DIV");
+          div.setAttribute("id", this.id + "-autocomplete-list");
+          div.setAttribute("class", "autocomplete-items");
+          this.parentNode.appendChild(div);
+
+          for (let i = 0; i < arr.length; i++) {
+            if (
+              arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()
+            ) {
+              let b = document.createElement("DIV");
+              b.innerHTML =
+                "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+              b.innerHTML += arr[i].substr(val.length);
+              b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+              b.addEventListener("click", function (e) {
+                inp.value = this.getElementsByTagName("input")[0].value;
+                closeAllLists();
+              });
+              div.appendChild(b);
+            }
+          }
+        });
+
+        inp.addEventListener("keydown", function (e) {
+          let x = document.getElementById(this.id + "-autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode == 40) {
+            // Arrow Down
+            currentFocus++;
+            addActive(x);
+          } else if (e.keyCode == 38) {
+            // Arrow Up
+            currentFocus--;
+            addActive(x);
+          } else if (e.keyCode == 13) {
+            // Enter
+            e.preventDefault();
+            if (currentFocus > -1) {
+              if (x) x[currentFocus].click();
+            }
+          }
+        });
+
+        function addActive(x) {
+          if (!x) return false;
+          removeActive(x);
+          if (currentFocus >= x.length) currentFocus = 0;
+          if (currentFocus < 0) currentFocus = x.length - 1;
+          x[currentFocus].classList.add("autocomplete-active");
+        }
+
+        function removeActive(x) {
+          for (let i = 0; i < x.length; i++) {
+            x[i].classList.remove("autocomplete-active");
+          }
+        }
+
+        function closeAllLists(elmnt) {
+          let x = document.getElementsByClassName("autocomplete-items");
+          for (let i = 0; i < x.length; i++) {
+            if (elmnt != x[i] && elmnt != inp) {
+              x[i].parentNode.removeChild(x[i]);
+            }
+          }
+        }
+
+        document.addEventListener("click", function (e) {
+          closeAllLists(e.target);
+        });
+      }
+
+      function updatePersonilFromRupam() {
+        const rupamValue = document.getElementById("kerupam").value;
+        const data = personilData[rupamValue];
+
+        if (data) {
+          document.getElementById("karupam").value = data.karupam;
+          document.getElementById("wakarupam").value = data.wakarupam;
+          document.getElementById("p2u_list").value = data.p2u_list;
+        }
+      }
+
+      function updateTotalPenghuni() {
+        const tahananDalam =
+          +document.getElementById("tahananDalam").value || 0;
+        const napiDalam = +document.getElementById("napiDalam").value || 0;
+        const tahananLuar = +document.getElementById("tahananLuar").value || 0;
+        const napiLuar = +document.getElementById("napiLuar").value || 0;
+
+        const jumlahDalamLapas = tahananDalam + napiDalam;
+        const jumlahDiLuarLapas = tahananLuar + napiLuar;
+        const totalPenghuni = jumlahDalamLapas + jumlahDiLuarLapas;
+
+        document.getElementById("jumlahDalamLapas").value = jumlahDalamLapas;
+        document.getElementById("jumlahDiLuarLapas").value = jumlahDiLuarLapas;
+        document.getElementById("totalPenghuni").value = totalPenghuni;
+      }
+
+      function updatePersonil() {
+        const rupam = +document.getElementById("rupam").value || 0;
+        const p2u = +document.getElementById("p2u").value || 0;
+        const jumlahPersonil = rupam + p2u;
+
+        document.getElementById("jumlahPersonil").value = jumlahPersonil;
+        document.getElementById("hadir").value = jumlahPersonil; // Set hadir = jumlah otomatis
+        updateKeterangan(); // Update keterangan juga
+      }
+
+      function updateKeterangan() {
+        const jumlahPersonil =
+          +document.getElementById("jumlahPersonil").value || 0;
+        const hadir = +document.getElementById("hadir").value || 0;
+
+        if (jumlahPersonil === hadir && jumlahPersonil > 0) {
+          document.getElementById("keterangan").value = "Hadir Lengkap";
+        } else if (jumlahPersonil > 0) {
+          document.getElementById("keterangan").value = "Hadir Sebagian"; // Atau sesuaikan dengan kebutuhan
+        } else {
+          document.getElementById("keterangan").value = "";
+        }
+      }
+
+      // FUNGSI BARU: Ambil data dari Google Sheets
+      function fetchDataFromSheets() {
+        const sheetId = "1N5lcMmQqaOBNC5fVKuWzoJAXo4oubYRM4Id_ml-_B_E";
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&headers=0`;
+
+        fetch(url)
+          .then((response) => response.text())
+          .then((text) => {
+            const jsonString = text.substring(
+              text.indexOf("{"),
+              text.lastIndexOf("}") + 1,
+            );
+            const data = JSON.parse(jsonString);
+
+            const tahananVal = data.table.rows[0].c[1].v;
+            const napiVal = data.table.rows[1].c[1].v;
+
+            document.getElementById("tahananDalam").value = tahananVal;
+            document.getElementById("napiDalam").value = napiVal;
+
+            updateTotalPenghuni();
+          })
+          .catch((error) => {
+            console.error("Gagal mengambil data dari Google Sheets:", error);
+          });
+      }
+
+      // Inisialisasi autocomplete untuk input terkait
+      document.addEventListener("DOMContentLoaded", function () {
+        autocomplete(
+          document.getElementById("pengawas_umum"),
+          pengawasUmumData,
+        );
+        autocomplete(document.getElementById("piket_perwira"), perwiraData);
+        autocomplete(document.getElementById("piket_staf_malam"), stafData);
+
+        // Panggil fungsi get data otomatis
+        fetchDataFromSheets();
+      });
+
+      // Panggil fungsi saat halaman dimuat untuk inisialisasi
+      updatePersonilFromRupam(); // Inisialisasi personil berdasarkan default rupam
+      updateTotalPenghuni();
+      updatePersonil();
+
+      function generateLaporan() {
+        const tgl = formatTanggalIndonesia(
+          document.getElementById("tanggal").value,
+        );
+
+        const darirupam = document.getElementById("darirupam").value;
+        const kerupam = document.getElementById("kerupam").value;
+
+        const tahananDalam =
+          +document.getElementById("tahananDalam").value || 0;
+        const napiDalam = +document.getElementById("napiDalam").value || 0;
+        const tahananLuar = +document.getElementById("tahananLuar").value || 0;
+        const napiLuar = +document.getElementById("napiLuar").value || 0;
+
+        const jumlahDalamLapas =
+          +document.getElementById("jumlahDalamLapas").value || 0;
+        const jumlahDiLuarLapas =
+          +document.getElementById("jumlahDiLuarLapas").value || 0;
+        const totalPenghuni =
+          +document.getElementById("totalPenghuni").value || 0;
+
+        const rupam = +document.getElementById("rupam").value || 0;
+        const p2u = +document.getElementById("p2u").value || 0;
+        const jumlahPersonil =
+          +document.getElementById("jumlahPersonil").value || 0;
+        const hadir = +document.getElementById("hadir").value || 0;
+        const keterangan = document.getElementById("keterangan").value;
+
+        // Detail personil
+        const karupam = document.getElementById("karupam").value;
+        const wakarupam = document.getElementById("wakarupam").value;
+        const p2uList = document
+          .getElementById("p2u_list")
+          .value.split(",")
+          .map((item) => item.trim())
+          .join("\n  ");
+        const petugasBlokBC = document
+          .getElementById("petugas_blok_bc")
+          .value.split(",")
+          .map((item) => item.trim())
+          .join(" > ");
+        const petugasBlokDEF = document
+          .getElementById("petugas_blok_def")
+          .value.split(",")
+          .map((item) => item.trim())
+          .join(" > ");
+        const petugasMenara2 = document
+          .getElementById("petugas_menara2")
+          .value.split(",")
+          .map((item) => item.trim())
+          .join(" > ");
+        const petugasMenara4 = document
+          .getElementById("petugas_menara4")
+          .value.split(",")
+          .map((item) => item.trim())
+          .join(" > ");
+        const pengawasUmum = document.getElementById("pengawas_umum").value;
+        const piketPerwira = document.getElementById("piket_perwira").value;
+        const piketStafMalam =
+          document.getElementById("piket_staf_malam").value;
+
+        // Inventaris
+        const ht = +document.getElementById("ht").value || 0;
+        const tongkatPhh = +document.getElementById("tongkat_phh").value || 0;
+        const metalDetector =
+          +document.getElementById("metal_detector").value || 0;
+        const apar = +document.getElementById("apar").value || 0;
+        const mejaKursi = +document.getElementById("meja_kursi").value || 0;
+        const payung = +document.getElementById("payung").value || 0;
+        const jasHujan = +document.getElementById("jas_hujan").value || 0;
+        const senter = +document.getElementById("senter").value || 0;
+        const speakerToa = +document.getElementById("speaker_toa").value || 0;
+        const lonceng = +document.getElementById("lonceng").value || 0;
+        const sepatuBoot = +document.getElementById("sepatu_boot").value || 0;
+        const pepperSpray = +document.getElementById("pepper_spray").value || 0;
+
+        const laporan = `
+*ASTEKPAM SIANG LAPAS KELAS IIB BATANG*
+${tgl}
+
+Mohon ijin melaporkan Astekpam dari ${darirupam} Pagi Ke ${kerupam} Siang berjalan dengan aman, tertib dan lengkap. Dengan rincian sbb :
+
+*A. JUMLAH PENGHUNI*
+    \`\`\`1. Penghuni di dalam Lapas
+    • Tahanan      = ${tahananDalam} Orang
+    • Narapidana   = ${napiDalam} Orang
+    ---------------------- 
+    Jumlah         = ${jumlahDalamLapas} Orang
+
+2. Penghuni di luar Lapas
+    • Tahanan      = ${tahananLuar} Orang
+    • Narapidana   = ${napiLuar} Orang
+    ---------------------- 
+    Jumlah         = ${jumlahDiLuarLapas} Orang
+  
+3. Jumlah Total Penghuni
+    Jumlah         = ${totalPenghuni} Orang\`\`\`
+
+*B. PERSONIL PENGAMANAN*
+    \`\`\`  Rupam          = ${rupam} Orang
+    P2U            = ${p2u} Orang
+    ---------------------- 
+    Jumlah         = ${jumlahPersonil} Orang
+    Hadir          = ${hadir} Orang
+
+    Keterangan
+    ${keterangan}\`\`\`
+
+Karupam
+${karupam} 
+
+Wakarupam
+${wakarupam}
+
+P2U
+${p2uList}
+
+Petugas Blok B dan C
+${petugasBlokBC}
+
+Petugas Blok D, E dan F
+${petugasBlokDEF}
+
+Petugas Pos menara 1
+${petugasMenara2}
+
+Petugas Pos menara 3
+${petugasMenara4}
+
+Staf KPLP
+${piketStafMalam}
+
+*C. INVENTARIS PENGAMANAN*
+    \`\`\`  • Pesawat HT    = ${ht} Buah
+    • Tongkat PHH   = ${tongkatPhh} Buah
+    • Metal Detector= ${metalDetector} Buah
+    • Apar          = ${apar} Buah
+    • Meja,Kursi    = ${mejaKursi} Buah
+    • Payung        = ${payung} Buah
+    • Jas Hujan     = ${jasHujan} Buah
+    • Senter        = ${senter} Buah
+    • Speaker/TOA   = ${speakerToa} Buah
+    • Lonceng       = ${lonceng} Buah
+    • Sepatu Boot   = ${sepatuBoot} Buah
+    • Pepper Spray  = ${pepperSpray} Buah\`\`\`
+
+Inventaris dalam keadaan lengkap dan baik.
+Situasi Lapas dalam keadaan aman dan kondusif.
+Do The Best and Always The Best
+`;
+
+        document.getElementById("output").textContent = laporan;
+      }
+
+      // Fungsi untuk menyalin teks dari elemen <pre>
+      function copyToClipboard() {
+        const outputElement = document.getElementById("output");
+        const textToCopy = outputElement.textContent;
+
+        if (!textToCopy) {
+          alert("Tidak ada laporan untuk disalin.");
+          return;
+        }
+
+        navigator.clipboard
+          .writeText(textToCopy)
+          .then(() => {
+            // Berhasil disalin
+            const btn = document.getElementById("copyButton");
+            const originalText = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => {
+              btn.textContent = originalText;
+            }, 2000); // Ubah teks kembali setelah 2 detik
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+            alert(
+              "Gagal menyalin teks. Silakan coba lagi atau salin secara manual.",
+            );
+          });
+      }
+    </script>
+  </body>
+</html>

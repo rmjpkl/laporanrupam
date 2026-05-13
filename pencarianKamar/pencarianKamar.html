@@ -1,0 +1,248 @@
+<html>
+  <head>
+    <title>Pencarian Kamar WBP</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <style type="text/css">
+      body {
+        font-family: "Arial";
+      }
+
+      #myInput {
+        background-position: 10px 10px;
+        background-repeat: no-repeat;
+        width: 100%;
+        font-size: 16px;
+        padding: 12px 20px 12px 40px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+        box-sizing: border-box; /* Mencegah input melebar keluar layar */
+      }
+
+      /* Table */
+      table {
+        margin: auto;
+        font-family: "Arial";
+        font-size: 12px;
+        width: 100%;
+      }
+      .table {
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .table th,
+      .table td {
+        border-bottom: 1px solid #cccccc;
+        border-left: 1px solid #cccccc;
+        padding: 9px 21px;
+      }
+      .table th,
+      .table td:last-child {
+        border-right: 1px solid #cccccc;
+      }
+      .table td:first-child {
+        border-top: 1px solid #cccccc;
+      }
+
+      /* Table Header */
+      .table thead th {
+        background-color: #3e2ecd;
+        color: #ffffff;
+      }
+
+      /* Table Body */
+      .table tbody td {
+        color: #353535;
+      }
+      .table tbody tr:nth-child(odd) td {
+        background-color: #b7e1fd;
+      }
+      .table tbody tr:hover th,
+      .table tbody tr:hover td {
+        background-color: #f0f0f0;
+        transition: all 0.2s;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      @media screen and (max-width: 520px) {
+        /*Tabel Responsive 3*/
+        .responsive-3 {
+          width: 100%;
+        }
+        .responsive-3 thead th.column-primary {
+          width: 100%;
+        }
+        .responsive-3 thead th:not(.column-primary) {
+          display: none;
+        }
+        .responsive-3 td {
+          display: block;
+          width: auto;
+          text-align: right;
+          border-right: 1px solid #e1edff;
+        }
+        .responsive-3 thead th::before {
+          text-transform: uppercase;
+          font-weight: bold;
+          content: attr(data-header);
+        }
+        .responsive-3 thead th:first-child span {
+          display: none;
+        }
+        .responsive-3 td::before {
+          float: left;
+          text-transform: uppercase;
+          font-weight: bold;
+          content: attr(data-header);
+        }
+      }
+
+      /* Loading Spinner */
+      .loading {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        height: 2em;
+        width: 2em;
+        overflow: visible;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+      .loading:before {
+        content: "";
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        margin-top: -25px;
+        margin-left: -25px;
+        border-radius: 50%;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h3 class="text-center">Pencarian Kamar WBP</h3>
+    <input
+      type="text"
+      id="myInput"
+      onkeyup="searchData()"
+      placeholder="Ketik nama di sini..."
+      title="Type in a name"
+    />
+
+    <div id="loading" class="loading"></div>
+
+    <table class="table responsive-3" id="myTable">
+      <thead>
+        <tr>
+          <th class="column-primary" data-header="Pencarian WBP">
+            <span>Nama</span>
+          </th>
+          <th>Blok</th>
+          <th>Kamar</th>
+        </tr>
+      </thead>
+      <tbody id="wrapper"></tbody>
+    </table>
+
+    <script>
+      // Variabel global untuk menyimpan data asli dari Google Sheets
+      let masterData = [];
+      let searchTimeout = null;
+
+      async function getData() {
+        const spreadsheetId = "1eyiPUW2POKcPA6-gNQbAlsH37dd1CqJhofZ1sZHVqmA";
+        const apiKey = "AIzaSyD8yvaiWF3p4ohg2040C4xrwMDqc_cfiI0";
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/?key=${apiKey}&includeGridData=true`;
+
+        const result = await fetch(url);
+        const { sheets } = await result.json();
+        const firstSheet = sheets[1]; // Mengambil sheet indeks ke-1
+
+        // Ekstraksi data secara aman (mencegah error jika ada baris/kolom kosong)
+        const data = firstSheet.data[0].rowData
+          .filter((_, index) => index !== 0)
+          .map((row) => {
+            const values = row.values || [];
+            return {
+              nama: values[0]?.formattedValue || "-",
+              blok: values[1]?.formattedValue || "-",
+              kamar: values[2]?.formattedValue || "-",
+            };
+          });
+        return data;
+      }
+
+      function dataItemTemplate(item) {
+        return `<tr>
+                <td data-header="Nama">${item.nama}</td>
+                <td data-header="Blok">${item.blok}</td>      
+                <td data-header="T/N">${item.kamar}</td>      
+            </tr>`;
+      }
+
+      // Fungsi untuk merender tabel berdasarkan array data
+      function renderTable(dataArray) {
+        const wrapperDOM = document.getElementById("wrapper");
+        wrapperDOM.innerHTML = dataArray
+          .map((item) => dataItemTemplate(item))
+          .join("");
+      }
+
+      async function init() {
+        const loadingDOM = document.getElementById("loading");
+        loadingDOM.style.display = "block";
+
+        try {
+          masterData = await getData();
+          renderTable(masterData); // Tampilkan semua data saat pertama kali dimuat
+        } catch (error) {
+          document.getElementById("wrapper").innerHTML =
+            `<tr><td colspan="3" class="text-center text-danger">Gagal memuat data. Periksa koneksi atau API Key Anda.</td></tr>`;
+          console.error(error);
+        }
+
+        loadingDOM.style.display = "none";
+      }
+
+      // Fitur Pencarian Cepat dengan Debounce dan In-Memory Filter
+      function searchData() {
+        clearTimeout(searchTimeout);
+
+        // Memberikan jeda 300ms agar pencarian tidak dijalankan di setiap ketikan jari
+        searchTimeout = setTimeout(() => {
+          const input = document.getElementById("myInput").value.toUpperCase();
+
+          // Filter array secara langsung (In-Memory), ribuan kali lebih cepat dari DOM
+          const filteredData = masterData.filter((item) =>
+            item.nama.toUpperCase().includes(input),
+          );
+
+          // Cetak ulang tabel hanya dengan data yang cocok
+          renderTable(filteredData);
+        }, 300);
+      }
+
+      // Jalankan saat halaman dibuka
+      init();
+    </script>
+  </body>
+</html>

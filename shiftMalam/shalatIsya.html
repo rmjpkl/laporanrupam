@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LAPORAN SHALAT ISYA'</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <style type="text/css">
+      body {
+        background-color: rgb(95, 62, 255);
+      }
+      .form-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      #send_form {
+        color: #fff;
+        background: #4e4e4e;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 25px;
+        border-radius: 0.3rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-size: 15px;
+        width: 100%;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+      }
+      #send_form:hover {
+        background: #333333;
+      }
+      #output {
+        width: 100%;
+        min-height: 120px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.95em;
+        line-height: 1.5;
+        resize: vertical;
+        box-sizing: border-box;
+        background-color: #f8f9fa;
+        margin-top: 15px;
+        white-space: pre-wrap;
+      }
+      .copy-button-container {
+        text-align: right;
+        margin-top: 10px;
+      }
+      #copyButton {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
+      #copyButton:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-sm">
+      <div class="form-container">
+        <h1 class="text-center mb-4">LAPORAN SHALAT ISYA'</h1>
+        <form id="isyaForm">
+          <fieldset class="form-group border p-3">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Jumlah Warga Binaan</label>
+              <input
+                type="number"
+                class="form-control"
+                id="jumlahWBP"
+                placeholder="Masukkan jumlah orang..."
+                required
+              />
+            </div>
+          </fieldset>
+
+          <button
+            class="mt-3"
+            id="send_form"
+            type="button"
+            onclick="generateLaporan()"
+          >
+            <i class="fa fa-file-alt"></i> Generate Laporan
+          </button>
+        </form>
+
+        <textarea id="output" style="display: none"></textarea>
+
+        <div
+          class="copy-button-container"
+          id="copyContainer"
+          style="display: none"
+        >
+          <button id="copyButton" onclick="copyToClipboard()">
+            <i class="fa fa-copy"></i> Copy Laporan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function generateLaporan() {
+        // Ambil nilai input
+        var input_jumlah = document.getElementById("jumlahWBP").value;
+
+        // Validasi
+        if (!input_jumlah || input_jumlah <= 0) {
+          alert("Mohon masukkan jumlah warga binaan yang valid!");
+          return;
+        }
+
+        // Format Text Laporan sesuai permintaan
+        var laporan = `Izin melaporkan ${input_jumlah} warga binaan melaksanakan giat shalat isya' berjamaah di masjid pengawasan rupam malam dalam keadaan aman`;
+
+        // Tampilkan hasil ke textarea
+        const outputElement = document.getElementById("output");
+        outputElement.value = laporan;
+        outputElement.style.display = "block";
+
+        // Munculkan tombol copy
+        document.getElementById("copyContainer").style.display = "block";
+      }
+
+      function copyToClipboard() {
+        const outputElement = document.getElementById("output");
+        outputElement.select();
+        outputElement.setSelectionRange(0, 99999); // Untuk mobile
+
+        navigator.clipboard
+          .writeText(outputElement.value)
+          .then(() => {
+            // Animasi feedback tombol
+            const btn = document.getElementById("copyButton");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa fa-check"></i> Copied!';
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Gagal menyalin: ", err);
+            alert("Gagal menyalin teks.");
+          });
+      }
+    </script>
+  </body>
+</html>

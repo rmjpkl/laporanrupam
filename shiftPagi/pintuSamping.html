@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LAPORAN P2U - PINTU SAMPING</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style type="text/css">
+      body {
+        background-color: rgb(
+          95,
+          62,
+          255
+        ); /* Mengikuti tema warna laporan lainnya */
+      }
+      .form-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      #send_form {
+        color: #fff;
+        background: #4e4e4e;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 25px;
+        border-radius: 0.3rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-size: 15px;
+        width: 100%;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+      }
+      #send_form:hover {
+        background: #333333;
+      }
+      #output {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.95em;
+        line-height: 1.5;
+        resize: vertical;
+        box-sizing: border-box;
+        background-color: #f8f9fa;
+        margin-top: 15px;
+        white-space: pre-wrap;
+      }
+      .copy-button-container {
+        text-align: right;
+        margin-top: 10px;
+      }
+      #copyButton {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
+      #copyButton:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-sm">
+      <div class="form-container">
+        <h1 class="text-center mb-4">LAPORAN MEMBUKA PINTU SAMPING</h1>
+        <form id="pintuSampingForm">
+          <fieldset class="form-group border p-3">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Keperluan</label>
+              <input
+                type="text"
+                class="form-control"
+                id="keperluan"
+                required
+                placeholder="ex: Memasukan Bama"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Pengawal</label>
+              <input
+                type="text"
+                class="form-control"
+                id="pengawal"
+                required
+                placeholder="ex: sdr ....."
+              />
+            </div>
+          </fieldset>
+
+          <button
+            class="mt-3"
+            id="send_form"
+            type="button"
+            onclick="generateLaporan()"
+          >
+            <i class="fa fa-file-alt"></i> Generate Laporan
+          </button>
+        </form>
+
+        <textarea id="output" style="display: none"></textarea>
+
+        <div
+          class="copy-button-container"
+          id="copyContainer"
+          style="display: none"
+        >
+          <button id="copyButton" onclick="copyToClipboard()">
+            <i class="fa fa-copy"></i> Copy Laporan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      // Script Autocomplete dari kode asli
+      $(function () {
+        var availableTags = [
+          "Anggota Rupam Pagi",
+          "Sdr. Anggit Febianto",
+          "Sdr. Caputra",
+          "Sdr. Daffa Bagos Marsekal",
+          "Sdr. Dody Sam Yusuf",
+          "Sdr. Hendra Surya A.G",
+          "Sdr. Ifal Khoiril",
+          "Sdr. Lafran Dwi Wijayanto",
+          "Sdr. M Fahmi Maulana",
+          "Sdr. M. Aditya Nugratama",
+          "Sdr. M. Irfan Nuddin",
+          "Sdr. M. Rafi",
+          "Sdr. Muh. Ade Purwadi",
+          "Sdr. Nuur Sidiq Permana",
+          "Sdr. Priambodo",
+          "Sdr. Sofyan Ali",
+          "Sdr. Suliz Aprizal",
+          "Sdr. Zihan Sendiko.P",
+        ];
+        $("#pengawal").autocomplete({
+          source: availableTags,
+        });
+      });
+
+      function generateLaporan() {
+        var input_keperluan = document.getElementById("keperluan").value;
+        var input_pengawal = document.getElementById("pengawal").value;
+
+        if (!input_keperluan || !input_pengawal) {
+          alert("Isi semua data keperluan dan pengawal terlebih dahulu!");
+          return;
+        }
+
+        // Format Text Laporan sesuai format asli di Source 4
+        var laporan = `Izin melaporkan, 
+Membuka pintu gerbang samping 
+keperluan ${input_keperluan}
+Pengawal ${input_pengawal}
+dalam keadaan aman`;
+
+        const outputElement = document.getElementById("output");
+        outputElement.value = laporan;
+        outputElement.style.display = "block";
+
+        document.getElementById("copyContainer").style.display = "block";
+      }
+
+      function copyToClipboard() {
+        const outputElement = document.getElementById("output");
+        outputElement.select();
+        outputElement.setSelectionRange(0, 99999);
+
+        navigator.clipboard
+          .writeText(outputElement.value)
+          .then(() => {
+            const btn = document.getElementById("copyButton");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa fa-check"></i> Copied!';
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Gagal menyalin: ", err);
+            alert("Gagal menyalin teks.");
+          });
+      }
+    </script>
+  </body>
+</html>

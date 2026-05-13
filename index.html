@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding: 20px 10px;
+        background-color: #121212; /* Dark theme yang lebih nyaman di mata */
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      h3,
+      h4 {
+        font-family: "Russo One", sans-serif;
+        letter-spacing: 1px;
+      }
+
+      h3 {
+        color: #f8f9fa;
+        margin-bottom: 5px;
+      }
+      h4 {
+        color: #adb5bd;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .menu-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 kolom di HP */
+        gap: 15px;
+        max-width: 600px;
+        margin: 0 auto;
+        padding-bottom: 80px; /* Jarak agar tidak tertutup footer */
+      }
+
+      .menu-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        padding: 15px 5px;
+        border-radius: 18px;
+        transition: all 0.3s ease;
+        aspect-ratio: 1 / 1; /* Membuat kotak sempurna */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .menu-item i {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .menu-item span {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      /* Warna Kustom agar lebih menarik */
+      .bg-summary {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+      }
+      .bg-pagi {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+      }
+      .bg-siang {
+        background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+        color: white;
+      }
+      .bg-malam {
+        background: linear-gradient(135deg, #373b44 0%, #4286f4 100%);
+        color: white;
+      }
+      .bg-search {
+        background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        color: white;
+      }
+
+      .menu-item:active {
+        transform: scale(0.92);
+        filter: brightness(1.1);
+      }
+
+      @media (min-width: 768px) {
+        .menu-container {
+          grid-template-columns: repeat(4, 1fr); /* 4 kolom di tablet/PC */
+        }
+      }
+
+      footer {
+        margin-top: auto;
+        padding: 20px 0;
+        font-size: 12px;
+        color: #6c757d;
+        border-top: 1px solid #222;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container text-center">
+      <h3>E-LAPOR</h3>
+      <h4>Lapas Kelas IIB Batang</h4>
+
+      <div class="menu-container">
+        <!-- <a href="generateLaporan" class="menu-item bg-summary">
+          <i class="fa fa-file-alt"></i>
+          <span>Summary</span>
+        </a> -->
+        <a href="shiftPagi/menuShiftPagi.html" class="menu-item bg-pagi">
+          <i class="fa fa-cloud-sun"></i>
+          <span>Pagi</span>
+        </a>
+        <a href="shiftSiang/menuShiftSiang.html" class="menu-item bg-siang">
+          <i class="fa fa-sun"></i>
+          <span>Siang</span>
+        </a>
+        <a href="shiftMalam/menuShiftMalam.html" class="menu-item bg-malam">
+          <i class="fa fa-moon"></i>
+          <span>Malam</span>
+        </a>
+        <a
+          href="pencarianKamar/pencarianKamar.html"
+          class="menu-item bg-search"
+        >
+          <i class="fa fa-search"></i>
+          <span>Kamar WBP</span>
+        </a>
+        <a href="pencarianKamar/mapenaling.html" class="menu-item bg-search">
+          <i class="fa fa-user-shield"></i>
+          <span>Mapenaling</span>
+        </a>
+        <a
+          href="pencarianKamar/updatePenghuni.html"
+          class="menu-item bg-search"
+        >
+          <i class="fa fa-sync-alt"></i>
+          <span>Update</span>
+        </a>
+      </div>
+    </div>
+
+    <footer class="text-center">
+      Create By Tim Humas Lapas Batang <i class="fas fa-copyright"></i>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
