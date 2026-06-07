@@ -1,615 +1,993 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kalkulator Remisi Narapidana</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kalkulator Remisi Narapidana</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0b1527;
+    --navy-mid: #142140;
+    --navy-light: #1e3260;
+    --gold: #c9a84c;
+    --gold-light: #e4c97e;
+    --gold-dim: #7a5e24;
+    --cream: #f5f0e8;
+    --cream-dim: #c8bfaa;
+    --red: #c0392b;
+    --green: #27ae60;
+    --text: #e8e2d8;
+    --text-dim: #8a8070;
+    --border: rgba(201,168,76,0.25);
+  }
 
-    :root {
-      --ink:       #1a1a2e;
-      --ink-light: #3a3a5c;
-      --gold:      #c9a84c;
-      --gold-dim:  #e8d9a8;
-      --cream:     #faf8f3;
-      --card:      #ffffff;
-      --border:    #e2ddd3;
-      --success:   #2d6a4f;
-      --success-bg:#d8f3dc;
-      --red:       #9b2226;
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      background: var(--cream);
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 16px 60px;
-    }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 39px,
+        rgba(255,255,255,0.018) 39px,
+        rgba(255,255,255,0.018) 40px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 59px,
+        rgba(255,255,255,0.018) 59px,
+        rgba(255,255,255,0.018) 60px
+      );
+  }
 
-    /* ── Header ───────────────────────────────── */
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--ink);
-      color: var(--gold-dim);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 999px;
-      margin-bottom: 18px;
-    }
-    .badge svg { width:13px; height:13px; fill:var(--gold); }
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(28px, 5vw, 46px);
-      font-weight: 900;
-      color: var(--ink);
-      line-height: 1.1;
-    }
-    h1 span { color: var(--gold); }
-    .subtitle {
-      margin-top: 10px;
-      color: var(--ink-light);
-      font-size: 14px;
-      font-weight: 300;
-    }
+  .wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+  }
 
-    /* ── Card ───────────────────────────────── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 36px 32px;
-      width: 100%;
-      max-width: 560px;
-      box-shadow: 0 8px 40px rgba(26,26,46,.06);
-    }
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.7s ease both;
+  }
 
-    /* ── Form ───────────────────────────────── */
-    .section-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 20px;
-    }
-    .field {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink-light);
-      margin-bottom: 8px;
-    }
-    input[type="date"],
-    input[type="number"] {
-      width: 100%;
-      padding: 13px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      color: var(--ink);
-      background: var(--cream);
-      transition: border-color .2s, box-shadow .2s;
-      outline: none;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-    input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201,168,76,.15);
-      background: #fff;
-    }
+  .emblem {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 20px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    background: radial-gradient(circle, rgba(201,168,76,0.15), transparent);
+    box-shadow: 0 0 24px rgba(201,168,76,0.2);
+  }
 
-    .row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+  .label-kementerian {
+    font-size: 10px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 10px;
+  }
 
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 28px 0;
-    }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 5vw, 36px);
+    color: var(--cream);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
 
-    /* ── Button ───────────────────────────────── */
-    button {
-      width: 100%;
-      padding: 15px;
-      background: var(--ink);
-      color: var(--gold-dim);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: .5px;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: background .2s, transform .1s;
-    }
-    button:hover { background: #252545; }
-    button:active { transform: scale(.98); }
+  .subtitle {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
 
-    /* ── Result Panel ───────────────────────────────── */
-    #result {
-      margin-top: 28px;
-      display: none;
-    }
-    #result.show { display: block; animation: fadeUp .4s ease both; }
+  .gold-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto 0;
+  }
 
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(14px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
+  /* ── CARD ── */
+  .card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 40px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.7s ease both;
+    position: relative;
+    overflow: hidden;
+  }
 
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
 
-    .stat-box {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-    }
-    .stat-box .stat-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--ink-light);
-      margin-bottom: 6px;
-    }
-    .stat-box .stat-value {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--ink);
-    }
-    .stat-box.accent { background: #fff8ec; border-color: var(--gold-dim); }
-    .stat-box.accent .stat-value { color: var(--gold); }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--gold-light);
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-    .free-date-box {
-      background: var(--success-bg);
-      border: 1.5px solid #74c69d;
-      border-radius: 16px;
-      padding: 22px 20px;
-      text-align: center;
-    }
-    .free-date-box .fd-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--success);
-      margin-bottom: 8px;
-    }
-    .free-date-box .fd-date {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--success);
-      line-height: 1.1;
-    }
-    .free-date-box .fd-day {
-      margin-top: 4px;
-      font-size: 13px;
-      color: #40916c;
-      font-weight: 500;
-    }
+  .card-title .icon {
+    font-size: 18px;
+  }
 
-    /* ── Extra date boxes ───────────────────────────────── */
-    .date-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .extra-date-box {
-      border-radius: 16px;
-      padding: 18px 16px;
-      text-align: center;
-    }
-    .extra-date-box.blue {
-      background: #e8f4fd;
-      border: 1.5px solid #90c4e8;
-    }
-    .extra-date-box.purple {
-      background: #f0eafa;
-      border: 1.5px solid #c4a8e0;
-    }
-    .extra-date-box .ed-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .extra-date-box.blue  .ed-label { color: #1a6fa0; }
-    .extra-date-box.purple .ed-label { color: #6a3ea0; }
-    .extra-date-box .ed-date {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.3;
-    }
-    .extra-date-box.blue  .ed-date { color: #1a5c8a; }
-    .extra-date-box.purple .ed-date { color: #5a2e8a; }
-    .extra-date-box .ed-day {
-      margin-top: 3px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    .extra-date-box.blue  .ed-day { color: #4a8ab5; }
-    .extra-date-box.purple .ed-day { color: #8a5ab5; }
-    .extra-date-box .ed-sub {
-      margin-top: 5px;
-      font-size: 11px;
-      color: var(--ink-light);
-      font-style: italic;
-    }
+  /* ── FORM ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 24px;
+  }
 
-    .note {
-      margin-top: 16px;
-      font-size: 11.5px;
-      color: var(--ink-light);
-      background: #f5f3ee;
-      border-radius: 10px;
-      padding: 12px 14px;
-      line-height: 1.6;
-    }
-    .note strong { color: var(--red); }
+  @media (max-width: 560px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .card { padding: 24px 20px; }
+  }
 
-    /* ── Remission detail table ───────────────────────────────── */
-    .detail-toggle {
-      margin-top: 14px;
-      text-align: center;
-    }
-    .detail-toggle button {
-      width: auto;
-      padding: 9px 24px;
-      background: transparent;
-      color: var(--ink-light);
-      border: 1.5px solid var(--border);
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 999px;
-    }
-    .detail-toggle button:hover { background: var(--cream); }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field.span2 { grid-column: span 2; }
 
-    #detail-table {
-      display: none;
-      margin-top: 16px;
-    }
-    #detail-table.show { display: block; }
+  label {
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    th {
-      background: var(--ink);
-      color: var(--gold-dim);
-      padding: 10px 12px;
-      text-align: left;
-      font-weight: 600;
-      letter-spacing: .5px;
-    }
-    th:first-child { border-radius: 10px 0 0 0; }
-    th:last-child  { border-radius: 0 10px 0 0; }
-    td {
-      padding: 9px 12px;
-      border-bottom: 1px solid var(--border);
-      color: var(--ink);
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:nth-child(even) td { background: var(--cream); }
-    td.sub { color: var(--ink-light); font-size: 12px; }
-    td.total-row { font-weight: 700; color: var(--gold); }
+  input[type="date"],
+  input[type="number"],
+  select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 6px;
+    color: var(--cream);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+  }
 
-    /* ── Error ───────────────────────────────── */
-    .error-msg {
-      color: var(--red);
-      font-size: 13px;
-      margin-top: 12px;
-      text-align: center;
-      font-weight: 500;
-    }
-  </style>
+  input[type="date"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.07);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8) sepia(0.5) hue-rotate(10deg);
+    cursor: pointer;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { opacity: 0.4; }
+
+  .input-note {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* ── BUTTON ── */
+  .btn-hitung {
+    margin-top: 28px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: var(--navy);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  }
+
+  .btn-hitung:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(201,168,76,0.35);
+  }
+
+  .btn-hitung:active { transform: translateY(0); }
+
+  /* ── RESULTS ── */
+  #hasil {
+    display: none;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .result-header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .badge-agama {
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  /* Result rows */
+  .result-group {
+    margin-bottom: 24px;
+  }
+
+  .result-group-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 12px;
+  }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.2s;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .result-row:hover { background: rgba(255,255,255,0.055); }
+
+  .result-row.highlight {
+    background: rgba(201,168,76,0.08);
+    border-color: rgba(201,168,76,0.3);
+  }
+
+  .result-row.highlight-green {
+    background: rgba(39,174,96,0.08);
+    border-color: rgba(39,174,96,0.25);
+  }
+
+  .result-label {
+    font-size: 13px;
+    color: var(--cream-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .result-number {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 18px;
+    text-align: right;
+  }
+
+  .result-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--cream);
+    text-align: right;
+  }
+
+  .result-value.gold { color: var(--gold-light); }
+  .result-value.green { color: #5dca8a; }
+
+  .result-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 2px;
+  }
+
+  /* Remisi breakdown */
+  .remisi-breakdown {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+  }
+
+  .remisi-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .remisi-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .remisi-row .rname { color: var(--cream-dim); }
+  .remisi-row .rval {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gold-light);
+    font-size: 13px;
+  }
+
+  .remisi-total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(201,168,76,0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .remisi-total .rname { color: var(--cream); font-size: 13px; }
+  .remisi-total .rval {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gold);
+    font-size: 15px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 20px 0;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .masa-bar-wrap {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px 14px;
+  }
+
+  .masa-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .masa-info span:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--cream);
+    font-weight: 500;
+  }
+
+  .masa-persen {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 10px;
+  }
+
+  .progress-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    position: relative;
+    overflow: visible;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    max-width: 100%;
+    box-shadow: 0 0 10px rgba(201,168,76,0.4);
+  }
+
+  .progress-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--navy-mid);
+    box-shadow: 0 0 8px rgba(201,168,76,0.6);
+    transition: left 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .masa-ends {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── REMISI NOTICE ── */
+  .remisi-notice {
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-bottom: 12px;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .remisi-notice.info {
+    background: rgba(52,152,219,0.1);
+    border: 1px solid rgba(52,152,219,0.3);
+    color: #7ecff5;
+    display: flex;
+    gap: 8px;
+  }
+
+  .remisi-notice.warn {
+    background: rgba(231,76,60,0.1);
+    border: 1px solid rgba(231,76,60,0.3);
+    color: #e5877d;
+    display: flex;
+    gap: 8px;
+  }
+
+  .remisi-notice.done {
+    background: rgba(39,174,96,0.1);
+    border: 1px solid rgba(39,174,96,0.3);
+    color: #5dca8a;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    color: #e5877d;
+    line-height: 1.6;
+    margin-top: 24px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── ERROR ── */
+  .error-msg {
+    background: rgba(192,57,43,0.12);
+    border: 1px solid rgba(192,57,43,0.35);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #e5877d;
+    margin-top: 14px;
+    display: none;
+  }
+</style>
 </head>
 <body>
+<div class="wrapper">
 
-<header>
-  <div class="badge">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-    Ditjen PAS
+  <!-- HEADER -->
+  <header>
+    <div class="emblem">⚖️</div>
+    <div class="label-kementerian">Ditjen Pemasyarakatan · Kalkulator Hukuman</div>
+    <h1>Kalkulator Remisi<br>Narapidana</h1>
+    <p class="subtitle">Berdasarkan PP No. 99 Tahun 2012 &amp; Peraturan Turunannya</p>
+    <div class="gold-line"></div>
+  </header>
+
+  <!-- INPUT CARD -->
+  <div class="card" style="animation-delay:0.1s">
+    <div class="card-title">
+      <span class="icon">📋</span> Data Penahanan
+    </div>
+
+    <div class="form-grid">
+      <div class="field span2">
+        <label>Tanggal Mulai Ditahan</label>
+        <input type="date" id="tglMulai" />
+        <span class="input-note">Tanggal pertama kali ditahan / mulai menjalani pidana</span>
+      </div>
+
+      <div class="field">
+        <label>Agama</label>
+        <select id="agama">
+          <option value="islam">Islam (Idul Fitri)</option>
+          <option value="kristen">Kristen (Natal)</option>
+          <option value="katolik">Katolik (Natal)</option>
+          <option value="hindu">Hindu (Nyepi)</option>
+          <option value="buddha">Buddha (Waisak)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Lama Hukuman (Tahun)</label>
+        <input type="number" id="hukumanTahun" min="0" max="40" placeholder="0" value="0" />
+      </div>
+
+      <div class="field">
+        <label>Lama Hukuman (Bulan)</label>
+        <input type="number" id="hukumanBulan" min="0" max="11" placeholder="0" value="0" />
+      </div>
+    </div>
+
+    <div class="error-msg" id="errorMsg">⚠️ Silakan lengkapi semua data dengan benar. Hukuman minimal 6 bulan.</div>
+
+    <button class="btn-hitung" onclick="hitung()">⚖ Hitung Remisi &amp; Tanggal Bebas</button>
   </div>
-  <h1>Kalkulator <span>Remisi</span><br/>Narapidana</h1>
-  <p class="subtitle">Hitung tanggal bebas berdasarkan remisi umum & khusus</p>
-</header>
 
-<div class="card">
-  <p class="section-label">Data Narapidana</p>
+  <!-- HASIL -->
+  <div class="card" id="hasil">
+    <div class="result-header">
+      <div class="result-header-title">
+        <span>📊</span> Hasil Perhitungan
+      </div>
+      <div class="badge-agama" id="badgeAgama">Islam · Idul Fitri</div>
+    </div>
 
-  <div class="field">
-    <label for="tanggal">Tanggal Pertama Ditahan</label>
-    <input type="date" id="tanggal" />
+    <!-- Durasi & Ekspirasi Murni -->
+    <div class="result-group">
+      <div class="result-group-label">— Tanpa Remisi</div>
+
+      <div class="result-row">
+        <div class="result-label">
+          <span class="result-number">①</span>
+          Tanggal Ekspirasi Murni
+        </div>
+        <div>
+          <div class="result-value gold" id="r1Date">—</div>
+          <div class="result-sub" id="r1Sisa">—</div>
+        </div>
+      </div>
+
+      <div class="result-row">
+        <div class="result-label">
+          <span class="result-number">②</span>
+          Tanggal ²⁄₃ Murni
+        </div>
+        <div>
+          <div class="result-value gold" id="r2Date">—</div>
+          <div class="result-sub" id="r2Sisa">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Masa Menjalani -->
+    <div class="result-group">
+      <div class="result-group-label">— Masa Menjalani s.d. Hari Ini</div>
+      <div class="masa-bar-wrap">
+        <div class="masa-info">
+          <span id="masaMenjalaniText">—</span>
+          <span id="masaPersen" class="masa-persen">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-marker" id="progressMarker"></div>
+        </div>
+        <div class="masa-ends">
+          <span id="masaKiri">Mulai Ditahan</span>
+          <span id="masaKanan">Ekspirasi Murni</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Remisi -->
+    <div class="result-group">
+      <div class="result-group-label">— Remisi Diperoleh s.d. Hari Ini ③</div>
+      <div class="remisi-notice" id="remisiNotice"></div>
+
+      <div class="remisi-breakdown">
+        <div id="remisiDetailRows"></div>
+        <div class="remisi-total">
+          <span class="rname">Total Remisi s.d. Hari Ini</span>
+          <span class="rval" id="totalRemisiDisplay">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Dikurangi Remisi -->
+    <div class="result-group">
+      <div class="result-group-label">— Setelah Dikurangi Remisi</div>
+
+      <div class="result-row highlight">
+        <div class="result-label">
+          <span class="result-number">④</span>
+          Ekspirasi – Remisi
+        </div>
+        <div>
+          <div class="result-value green" id="r4Date">—</div>
+          <div class="result-sub" id="r4Sisa">—</div>
+        </div>
+      </div>
+
+      <div class="result-row highlight-green">
+        <div class="result-label">
+          <span class="result-number">⑤</span>
+          ²⁄₃ – Remisi
+        </div>
+        <div>
+          <div class="result-value green" id="r5Date">—</div>
+          <div class="result-sub" id="r5Sisa">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <span>⚠️</span>
+      <span>Hasil perhitungan ini bersifat <strong>estimasi</strong> berdasarkan ketentuan umum. Remisi dapat berubah tergantung perilaku, jenis tindak pidana, dan keputusan pejabat berwenang. Konsultasikan dengan petugas Lapas/Rutan untuk kepastian hukum.</span>
+    </div>
   </div>
 
-  <hr class="divider" />
-  <p class="section-label">Lama Hukuman</p>
-
-  <div class="row-2">
-    <div class="field">
-      <label for="tahun">Tahun</label>
-      <input type="number" id="tahun" min="0" max="99" placeholder="0" />
-    </div>
-    <div class="field">
-      <label for="bulan">Bulan</label>
-      <input type="number" id="bulan" min="0" max="11" placeholder="0" />
-    </div>
-  </div>
-
-  <button onclick="hitung()">Hitung Tanggal Bebas</button>
-
-  <div class="error-msg" id="error"></div>
-
-  <div id="result">
-    <hr class="divider" />
-    <p class="section-label">Hasil Perhitungan</p>
-
-    <div class="result-grid">
-      <div class="stat-box">
-        <div class="stat-label">Total Hukuman</div>
-        <div class="stat-value" id="res-hukuman">—</div>
-      </div>
-      <div class="stat-box accent">
-        <div class="stat-label">Total Remisi</div>
-        <div class="stat-value" id="res-remisi">—</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Remisi Umum</div>
-        <div class="stat-value" id="res-ru">—</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Remisi Khusus</div>
-        <div class="stat-value" id="res-rk">—</div>
-      </div>
-      <div class="stat-box" style="grid-column:1/-1; background:#f0f4ff; border-color:#b8c8f0;">
-        <div class="stat-label" style="color:#3a4a8c;">Lama Hukuman Setelah Remisi</div>
-        <div class="stat-value" style="color:#2a3a7c;" id="res-efektif">—</div>
-      </div>
-    </div>
-
-    <div class="free-date-box">
-      <div class="fd-label">⚖ Perkiraan Tanggal Bebas</div>
-      <div class="fd-date" id="res-date">—</div>
-      <div class="fd-day" id="res-day"></div>
-    </div>
-
-    <div class="date-row">
-      <div class="extra-date-box blue">
-        <div class="ed-label">📋 2/3 Masa Penahanan</div>
-        <div class="ed-date" id="res-duapertiga">—</div>
-        <div class="ed-day" id="res-duapertiga-day"></div>
-        <div class="ed-sub">PB · (2/3 vonis) − remisi</div>
-      </div>
-      <div class="extra-date-box purple">
-        <div class="ed-label">📅 Ekspirasi</div>
-        <div class="ed-date" id="res-ekspirasi">—</div>
-        <div class="ed-day" id="res-ekspirasi-day"></div>
-        <div class="ed-sub">Akhir hukuman penuh</div>
-      </div>
-    </div>
-
-    <div class="detail-toggle">
-      <button onclick="toggleDetail()">▾ Lihat Rincian Per Tahun</button>
-    </div>
-
-    <div id="detail-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Tahun ke-</th>
-            <th>Remisi Umum</th>
-            <th>Remisi Khusus</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody id="detail-body"></tbody>
-      </table>
-    </div>
-
-    <div class="note">
-      <strong>⚠ Perhatian:</strong> Perhitungan ini bersifat estimasi berdasarkan PP No. 32/1999 jo. PP No. 99/2012. Remisi dapat berubah tergantung penilaian kelakuan, jenis pidana, dan kebijakan lapas. Konsultasikan dengan petugas Lapas untuk kepastian hukum.
-    </div>
-  </div>
 </div>
 
 <script>
-  const HARI_NAMA = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const BULAN_NAMA = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+// ── Helpers ────────────────────────────────────────────────────────────────
+function addMonths(date, months) {
+  const d = new Date(date);
+  const originalDay = d.getDate();
+  d.setMonth(d.getMonth() + Math.floor(months));
+  // Handle fractional months if needed
+  if (d.getDate() !== originalDay) d.setDate(0); // last day of prev month
+  return d;
+}
 
-  // Remisi dalam hari (1 bulan = 30 hari)
-  function getRuRk(yearNumber) {
-    // yearNumber: 1-based tahun ke berapa dalam masa hukuman
-    if (yearNumber === 1) return { ru: 60, rk: 30 };        // 2 bln, 1 bln
-    if (yearNumber === 2) return { ru: 90, rk: 30 };        // 3 bln, 1 bln
-    if (yearNumber === 3) return { ru: 120, rk: 30 };       // 4 bln, 1 bln
-    if (yearNumber <= 5)  return { ru: 150, rk: 45 };       // 5 bln, 1 bln 15 hr
-    return                       { ru: 180, rk: 60 };       // 6 bln, 2 bln
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function subtractDays(date, days) {
+  return addDays(date, -days);
+}
+
+function dateDiffDays(d1, d2) {
+  return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+}
+
+function formatDate(date) {
+  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function formatDays(days) {
+  const y = Math.floor(days / 365);
+  const rem = days % 365;
+  const m = Math.floor(rem / 30);
+  const d = rem % 30;
+  let parts = [];
+  if (y > 0) parts.push(`${y} thn`);
+  if (m > 0) parts.push(`${m} bln`);
+  if (d > 0) parts.push(`${d} hr`);
+  return parts.length ? parts.join(' ') : '0 hr';
+}
+
+function daysToReadable(d) {
+  const tahun = Math.floor(d / 30 / 12);
+  const bulan = Math.floor((d % (30 * 12)) / 30);
+  const hari  = d % 30;
+  let parts = [];
+  if (tahun) parts.push(`${tahun} Tahun`);
+  if (bulan) parts.push(`${bulan} Bulan`);
+  if (hari)  parts.push(`${hari} Hari`);
+  return parts.length ? parts.join(' ') : '0 Hari';
+}
+
+function sisaHari(target) {
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const diff = dateDiffDays(now, target);
+  if (diff < 0)   return `${Math.abs(diff)} hari yang lalu`;
+  if (diff === 0) return 'Hari ini';
+  return `${diff} hari lagi`;
+}
+
+// ── Remisi Umum per tahun (dalam hari) ─────────────────────────────────────
+function remisiUmumPerTahun(tahunKe) {
+  if (tahunKe === 1) return 60;          // 2 bulan
+  if (tahunKe === 2) return 90;          // 3 bulan
+  if (tahunKe === 3) return 120;         // 4 bulan
+  if (tahunKe <= 5)  return 150;         // 5 bulan
+  return 180;                            // 6 bulan (tahun ke-6+)
+}
+
+// ── Remisi Khusus per tahun (dalam hari) ───────────────────────────────────
+function remisiKhususPerTahun(tahunKe) {
+  if (tahunKe <= 3) return 30;           // 1 bulan
+  if (tahunKe <= 5) return 45;           // 1 bulan 15 hari
+  return 60;                             // 2 bulan (tahun ke-6+)
+}
+
+// ── Hitung total remisi berdasarkan total bulan hukuman ────────────────────
+function hitungRemisi(totalBulan) {
+  // Minimum 6 bulan untuk mendapatkan remisi
+  if (totalBulan < 6) return { umum: 0, khusus: 0, detail: [] };
+
+  // Jika 6–12 bulan
+  if (totalBulan <= 12) {
+    return {
+      umum:   30,
+      khusus: 15,
+      detail: [
+        { tahun: 'Remisi Umum (6–12 bln)',   umum: 30,  khusus: 15 }
+      ]
+    };
   }
 
-  function formatHari(totalDays) {
-    const bln = Math.floor(totalDays / 30);
-    const hr  = totalDays % 30;
-    if (bln === 0) return `${hr} hari`;
-    if (hr  === 0) return `${bln} bulan`;
-    return `${bln} bln ${hr} hr`;
+  // Lebih dari 12 bulan
+  const tahunPenuh   = Math.floor(totalBulan / 12);
+  const sisaBulan    = totalBulan % 12;
+  let umum   = 0;
+  let khusus = 0;
+  let detail = [];
+
+  for (let t = 1; t <= tahunPenuh; t++) {
+    const u = remisiUmumPerTahun(t);
+    const k = remisiKhususPerTahun(t);
+    umum   += u;
+    khusus += k;
+    detail.push({ tahun: `Tahun ke-${t}`, umum: u, khusus: k });
   }
 
-  function formatTanggal(date) {
-    return `${date.getDate()} ${BULAN_NAMA[date.getMonth()]} ${date.getFullYear()}`;
+  // Tahun parsial: jika sisa bulan >= 6, dihitung penuh untuk tahun berikutnya
+  if (sisaBulan >= 6) {
+    const t = tahunPenuh + 1;
+    const u = remisiUmumPerTahun(t);
+    const k = remisiKhususPerTahun(t);
+    umum   += u;
+    khusus += k;
+    detail.push({ tahun: `Tahun ke-${t} (parsial ≥ 6 bln)`, umum: u, khusus: k });
   }
 
-  function addDays(date, days) {
-    const d = new Date(date);
-    d.setDate(d.getDate() + days);
-    return d;
+  return { umum, khusus, detail };
+}
+
+// ── Label agama ─────────────────────────────────────────────────────────────
+const labelAgama = {
+  islam:   'Islam · Idul Fitri',
+  kristen: 'Kristen · Natal',
+  katolik: 'Katolik · Natal',
+  hindu:   'Hindu · Nyepi',
+  buddha:  'Buddha · Waisak'
+};
+
+// ── Hitung bulan yang sudah dijalani antara dua tanggal ─────────────────────
+function bulanAntara(dari, ke) {
+  let months = (ke.getFullYear() - dari.getFullYear()) * 12;
+  months += ke.getMonth() - dari.getMonth();
+  if (ke.getDate() < dari.getDate()) months--;
+  return Math.max(0, months);
+}
+
+// ── Format masa menjalani (hari exact → thn/bln/hr) ─────────────────────────
+function formatMasa(hariTotal) {
+  const thn = Math.floor(hariTotal / 365);
+  const sisa = hariTotal % 365;
+  const bln = Math.floor(sisa / 30);
+  const hr  = sisa % 30;
+  let parts = [];
+  if (thn) parts.push(`${thn} Tahun`);
+  if (bln) parts.push(`${bln} Bulan`);
+  if (hr || parts.length === 0) parts.push(`${hr} Hari`);
+  return parts.join(' ');
+}
+
+// ── MAIN: Hitung ────────────────────────────────────────────────────────────
+function hitung() {
+  const tglInput   = document.getElementById('tglMulai').value;
+  const tahunInput = parseInt(document.getElementById('hukumanTahun').value) || 0;
+  const bulanInput = parseInt(document.getElementById('hukumanBulan').value) || 0;
+  const agamaInput = document.getElementById('agama').value;
+  const errorEl    = document.getElementById('errorMsg');
+  const hasilEl    = document.getElementById('hasil');
+
+  const totalBulan = tahunInput * 12 + bulanInput;
+
+  // Validasi
+  if (!tglInput || totalBulan < 6) {
+    errorEl.style.display = 'block';
+    hasilEl.style.display = 'none';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  const tglMulai = new Date(tglInput);
+  tglMulai.setHours(0,0,0,0);
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // ── 1. Tanggal Ekspirasi Murni ──────────────────────────────────────────
+  const tglEkspirasi     = addMonths(tglMulai, totalBulan);
+  const totalHariHukuman = dateDiffDays(tglMulai, tglEkspirasi);
+
+  // ── 2. Tanggal 2/3 Murni ───────────────────────────────────────────────
+  const duaPertigaHari = Math.floor(totalHariHukuman * 2 / 3);
+  const tgl23Murni     = addDays(tglMulai, duaPertigaHari);
+
+  // ── Masa Menjalani s.d. Hari Ini ───────────────────────────────────────
+  // Jika belum mulai → 0; jika sudah lewat ekspirasi → cap di total hukuman
+  const belumMulai  = today < tglMulai;
+  const sudahHabis  = today >= tglEkspirasi;
+  const tglAcuan    = belumMulai ? tglMulai : (sudahHabis ? tglEkspirasi : today);
+  const hariMenjalani = dateDiffDays(tglMulai, tglAcuan);
+  const persen        = Math.min(100, Math.round(hariMenjalani / totalHariHukuman * 100));
+
+  // Bulan sudah dijalani s.d. hari ini (digunakan untuk menghitung remisi)
+  const bulanMenjalani = Math.min(
+    bulanAntara(tglMulai, tglAcuan),
+    totalBulan
+  );
+
+  // ── 3. Remisi diperoleh s.d. hari ini ─────────────────────────────────
+  const { umum, khusus, detail } = hitungRemisi(bulanMenjalani);
+  const totalRemisi = umum + khusus;
+
+  // ── 4. Ekspirasi - Remisi (s.d. hari ini) ─────────────────────────────
+  const tglEkspirasiFinal = subtractDays(tglEkspirasi, totalRemisi);
+
+  // ── 5. 2/3 - Remisi (s.d. hari ini) ──────────────────────────────────
+  const tgl23Final = subtractDays(tgl23Murni, totalRemisi);
+
+  // ── Render ─────────────────────────────────────────────────────────────
+  document.getElementById('badgeAgama').textContent = labelAgama[agamaInput] || agamaInput;
+
+  // Row 1 & 2 (murni)
+  document.getElementById('r1Date').textContent = formatDate(tglEkspirasi);
+  document.getElementById('r1Sisa').textContent = sisaHari(tglEkspirasi);
+  document.getElementById('r2Date').textContent = formatDate(tgl23Murni);
+  document.getElementById('r2Sisa').textContent = sisaHari(tgl23Murni);
+
+  // Progress bar masa menjalani
+  const masaTeks = belumMulai
+    ? 'Belum mulai menjalani'
+    : sudahHabis
+    ? `Selesai — ${formatMasa(totalHariHukuman)} (penuh)`
+    : formatMasa(hariMenjalani);
+  document.getElementById('masaMenjalaniText').textContent = masaTeks;
+  document.getElementById('masaPersen').textContent        = `${persen}%`;
+  document.getElementById('progressFill').style.width      = `${persen}%`;
+  document.getElementById('progressMarker').style.left     = `${persen}%`;
+  document.getElementById('masaKiri').textContent          = formatDate(tglMulai);
+  document.getElementById('masaKanan').textContent         = formatDate(tglEkspirasi);
+
+  // Notice di atas remisi
+  const noticeEl = document.getElementById('remisiNotice');
+  if (belumMulai) {
+    noticeEl.className   = 'remisi-notice warn';
+    noticeEl.innerHTML   = '<span>⚠️</span><span>Hukuman belum mulai dijalani. Remisi yang diperoleh: <strong>0 hari</strong>.</span>';
+  } else if (sudahHabis) {
+    noticeEl.className   = 'remisi-notice done';
+    noticeEl.innerHTML   = '<span>✅</span><span>Masa hukuman telah selesai dijalani. Remisi dihitung berdasarkan total hukuman penuh.</span>';
+  } else {
+    noticeEl.className   = 'remisi-notice info';
+    noticeEl.innerHTML   = `<span>ℹ️</span><span>Remisi dihitung berdasarkan masa menjalani <strong>${formatMasa(hariMenjalani)}</strong> (${bulanMenjalani} bulan) s.d. hari ini.</span>`;
   }
 
-  function addMonths(date, months) {
-    const d = new Date(date);
-    d.setMonth(d.getMonth() + months);
-    return d;
-  }
-
-  function hitungRemisi(totalBulan) {
-    const rows = [];
-    let totalRuDays = 0;
-    let totalRkDays = 0;
-
-    if (totalBulan < 6) {
-      return { rows, totalRuDays: 0, totalRkDays: 0 };
-    }
-
-    if (totalBulan <= 12) {
-      // Khusus 6-12 bulan
-      rows.push({ label: '6–12 bulan', ru: 30, rk: 15 });
-      return { rows, totalRuDays: 30, totalRkDays: 15 };
-    }
-
-    // > 12 bulan: hitung per tahun penuh
-    const tahunPenuh = Math.floor(totalBulan / 12);
-    const sisaBulan  = totalBulan % 12;
-
-    for (let y = 1; y <= tahunPenuh; y++) {
-      const { ru, rk } = getRuRk(y);
-      rows.push({ label: `Tahun ke-${y}`, ru, rk });
-      totalRuDays += ru;
-      totalRkDays += rk;
-    }
-
-    // Sisa bulan (jika >= 6 bulan dapat remisi setara 6-12 bln)
-    if (sisaBulan >= 6) {
-      rows.push({ label: `Sisa ${sisaBulan} bulan`, ru: 30, rk: 15 });
-      totalRuDays += 30;
-      totalRkDays += 15;
-    }
-
-    return { rows, totalRuDays, totalRkDays };
-  }
-
-  function hitung() {
-    const errorEl = document.getElementById('error');
-    errorEl.textContent = '';
-
-    const tanggalVal = document.getElementById('tanggal').value;
-    const tahunVal   = parseInt(document.getElementById('tahun').value) || 0;
-    const bulanVal   = parseInt(document.getElementById('bulan').value) || 0;
-
-    if (!tanggalVal) { errorEl.textContent = 'Harap isi tanggal pertama ditahan.'; return; }
-    if (tahunVal === 0 && bulanVal === 0) { errorEl.textContent = 'Harap isi lama hukuman (tahun dan/atau bulan).'; return; }
-    if (bulanVal < 0 || bulanVal > 11) { errorEl.textContent = 'Bulan harus antara 0–11.'; return; }
-
-    const tanggalDitahan = new Date(tanggalVal + 'T00:00:00');
-    const totalBulan     = tahunVal * 12 + bulanVal;
-
-    // Tanggal bebas tanpa remisi
-    const tanggalBebasKasar = addMonths(tanggalDitahan, totalBulan);
-
-    // Hitung remisi
-    const { rows, totalRuDays, totalRkDays } = hitungRemisi(totalBulan);
-    const totalRemisiDays = totalRuDays + totalRkDays;
-
-    // Tanggal bebas final
-    const tanggalBebas = addDays(tanggalBebasKasar, -totalRemisiDays);
-
-    // ── Tampilkan hasil ──
-    document.getElementById('res-hukuman').textContent =
-      tahunVal > 0 && bulanVal > 0 ? `${tahunVal} thn ${bulanVal} bln`
-      : tahunVal > 0 ? `${tahunVal} tahun`
-      : `${bulanVal} bulan`;
-
-    document.getElementById('res-remisi').textContent = formatHari(totalRemisiDays);
-    document.getElementById('res-ru').textContent     = formatHari(totalRuDays);
-    document.getElementById('res-rk').textContent     = formatHari(totalRkDays);
-
-    // Lama hukuman efektif (setelah dikurangi remisi) dalam hari
-    const hukumanTotalHari = totalBulan * 30;
-    const efektifHari      = hukumanTotalHari - totalRemisiDays;
-    document.getElementById('res-efektif').textContent = formatHari(efektifHari);
-
-    // Tanggal bebas dengan remisi
-    document.getElementById('res-date').textContent   = formatTanggal(tanggalBebas);
-    document.getElementById('res-day').textContent    = HARI_NAMA[tanggalBebas.getDay()];
-
-    // 2/3 masa penahanan = 2/3 × vonis asli − total remisi (PP No. 32/1999)
-    // Syarat PB dihitung dari hukuman vonis hakim, bukan dari sisa setelah remisi
-    const duaPertigaHari    = Math.floor(hukumanTotalHari * 2 / 3) - totalRemisiDays;
-    const tanggalDuaPertiga = addDays(tanggalDitahan, Math.max(duaPertigaHari, 0));
-    document.getElementById('res-duapertiga').textContent     = formatTanggal(tanggalDuaPertiga);
-    document.getElementById('res-duapertiga-day').textContent = HARI_NAMA[tanggalDuaPertiga.getDay()];
-
-    // Ekspirasi = akhir hukuman penuh tanpa remisi
-    const tanggalEkspirasi = addMonths(tanggalDitahan, totalBulan);
-    document.getElementById('res-ekspirasi').textContent     = formatTanggal(tanggalEkspirasi);
-    document.getElementById('res-ekspirasi-day').textContent = HARI_NAMA[tanggalEkspirasi.getDay()];
-
-    // ── Tabel detail ──
-    const tbody = document.getElementById('detail-body');
-    tbody.innerHTML = '';
-    rows.forEach(r => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r.label}</td>
-        <td>${formatHari(r.ru)}</td>
-        <td>${formatHari(r.rk)}</td>
-        <td class="sub">${formatHari(r.ru + r.rk)}</td>`;
-      tbody.appendChild(tr);
+  // Remisi detail rows
+  let detailHTML = '';
+  if (detail.length === 0) {
+    detailHTML = `<div class="remisi-row"><span class="rname" style="color:var(--text-dim)">Belum memenuhi syarat minimum 6 bulan</span><span class="rval">0 hari</span></div>`;
+  } else {
+    detail.forEach(row => {
+      detailHTML += `
+        <div class="remisi-row">
+          <span class="rname">${row.tahun}</span>
+          <span class="rval">Umum: ${row.umum} hr &nbsp;|&nbsp; Khusus: ${row.khusus} hr</span>
+        </div>`;
     });
-    // Total row
-    const trTotal = document.createElement('tr');
-    trTotal.innerHTML = `
-      <td class="total-row">TOTAL</td>
-      <td class="total-row">${formatHari(totalRuDays)}</td>
-      <td class="total-row">${formatHari(totalRkDays)}</td>
-      <td class="total-row">${formatHari(totalRemisiDays)}</td>`;
-    tbody.appendChild(trTotal);
-
-    const resultEl = document.getElementById('result');
-    resultEl.classList.remove('show');
-    void resultEl.offsetWidth; // reflow for animation
-    resultEl.classList.add('show');
-
-    // Reset detail table
-    document.getElementById('detail-table').classList.remove('show');
+    detailHTML += `
+      <div class="remisi-row" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05)">
+        <span class="rname" style="color:var(--cream-dim)">Subtotal Remisi Umum</span>
+        <span class="rval">${umum} hari = ${daysToReadable(umum)}</span>
+      </div>
+      <div class="remisi-row">
+        <span class="rname" style="color:var(--cream-dim)">Subtotal Remisi Khusus</span>
+        <span class="rval">${khusus} hari = ${daysToReadable(khusus)}</span>
+      </div>`;
   }
+  document.getElementById('remisiDetailRows').innerHTML    = detailHTML;
+  document.getElementById('totalRemisiDisplay').textContent = `${totalRemisi} hari = ${daysToReadable(totalRemisi)}`;
 
-  function toggleDetail() {
-    document.getElementById('detail-table').classList.toggle('show');
-  }
+  // Row 4 & 5 (dikurangi remisi s.d. hari ini)
+  document.getElementById('r4Date').textContent = formatDate(tglEkspirasiFinal);
+  document.getElementById('r4Sisa').textContent = sisaHari(tglEkspirasiFinal);
+  document.getElementById('r5Date').textContent = formatDate(tgl23Final);
+  document.getElementById('r5Sisa').textContent = sisaHari(tgl23Final);
+
+  hasilEl.style.display = 'block';
+  hasilEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') hitung();
+});
 </script>
 </body>
 </html>
